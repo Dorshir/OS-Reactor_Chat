@@ -1,18 +1,15 @@
 CXX = clang-14
-CXXFLAGS = -Wall -Wextra -std=c++17 -lstdc++ -pthread
+CXXFLAGS = -Wall -Wextra -std=c++17
 
-.PHONY: all clean check
+.PHONY: all clean
 
-all: Server
+all: react_server
 
-Server: Server.cpp libst_reactor.so
-	$(CXX) $(CXXFLAGS) -o $@ $< -L. -lst_reactor
+react_server: Server.cpp libst_reactor.so
+	$(CXX) $(CXXFLAGS) -o react_server Server.cpp -L. -lst_reactor -lstdc++ -ldl -pthread
 
 libst_reactor.so: st_reactor.cpp st_reactor.hpp
-	$(CXX) $(CXXFLAGS) -fPIC -shared -o $@ $<
+	$(CXX) $(CXXFLAGS) -fPIC -shared -o libst_reactor.so st_reactor.cpp
 
 clean:
-	rm -f Server libst_reactor.so
-
-valgrind: Server
-	valgrind --leak-check=full ./Server
+	rm -f react_server libst_reactor.so
